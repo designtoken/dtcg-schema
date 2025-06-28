@@ -6,7 +6,7 @@ const extensionsKeyPattern = /^[a-z0-9]+(\.[a-z0-9-]+)+$/i;
 const extensionsObj = z
   .record(z.any())
   .refine(obj => Object.keys(obj).every(k => extensionsKeyPattern.test(k)), {
-    message: 'extension keys must be vendor-scoped, e.g. "com.example"',
+    message: 'extension keys must be vendor‑scoped, e.g. "com.example"',
   });
 
 const meta = {
@@ -22,23 +22,52 @@ const aliasRef = z.string().regex(/^\{[^{}]+\}$/);
 
 // ─── reusable primitive fragments ───
 
+// 1. Dimension (expanded unit list per Format §8.2)
+const dimensionUnit = z.enum([
+  'px',
+  'rem',
+  'em',
+  'vw',
+  'vh',
+  'vmin',
+  'vmax',
+  '%',
+  'pt',
+  'pc',
+  'cm',
+  'mm',
+  'in',
+  'q',
+  'ch',
+  'ex',
+  'deg',
+  'rad',
+  'turn',
+]);
 const dimensionObj = z.object({
   value: z.number(),
-  unit: z.enum(['px', 'rem']), // §8.2.1 Validation
+  unit: dimensionUnit,
 });
 const dimensionVal = z.union([aliasRef, dimensionObj]);
 
+// 2. Color
+const hexColor = z.string().regex(/^#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/);
 const colorComponent = z.number().min(0).max(1);
 const colorObj = z.object({
   colorSpace: z.string(),
   components: z.array(colorComponent).min(3).max(4),
   alpha: z.number().min(0).max(1).optional(),
-  hex: z.string().regex(/^#?([0-9a-fA-F]{8}|[0-9a-fA-F]{6})$/).optional(),
+  hex: z
+    .string()
+    .regex(/^#?([0-9a-fA-F]{8}|[0-9a-fA-F]{6})$/)
+    .optional(),
 });
-const colorVal = z.union([aliasRef, colorObj]);
+const colorVal = z.union([aliasRef, hexColor, colorObj]);
 
+// 3. Font family
 const fontFamilyVal = z.union([aliasRef, z.string().min(1)]);
 
+// 4. Font weight
 const weightKeyword = z.enum([
   'thin',
   'extra-light',
@@ -56,17 +85,21 @@ const fontWeightVal = z.union([
   weightKeyword,
 ]);
 
+// 5. Duration
 const durationObj = z.object({
   value: z.number().min(0),
   unit: z.enum(['ms', 's']),
 });
 const durationVal = z.union([aliasRef, durationObj]);
 
+// 6. Cubic Bézier
 const cubicBezierVal = z.union([aliasRef, z.array(z.number()).length(4)]);
 
+// 7. Number
 const numberVal = z.union([aliasRef, z.number()]);
 
-// every primitive & composite $type value in the 2025‑06‑26 drafts
+/* ───────────────────────── primitive $type registry ────────────────────────── */
+
 const baseTypes = z.enum([
   'color',
   'dimension',
@@ -147,7 +180,10 @@ const typographyVal = z.object({
 
 /* ───────────────────────── leaf‑token builder ────────────────────────── */
 
-const leafToken = <T extends z.ZodTypeAny>(valueSchema: T, literalType: z.infer<typeof baseTypes>) =>
+const leafToken = <T extends z.ZodTypeAny>(
+  valueSchema: T,
+  literalType: z.infer<typeof baseTypes>,
+) =>
   z
     .object({
       $value: valueSchema,
@@ -202,7 +238,7 @@ export const token = z.union([
 
 /* -----------------------------------------------------------------
    Forward declaration so `group` and `tokenOrGroup` can refer
-   to each other without circular-reference errors
+   to each other without circular‑reference errors
 ------------------------------------------------------------------*/
 let tokenOrGroup: z.ZodTypeAny;
 
@@ -231,7 +267,7 @@ const group = z.lazy(() =>
 tokenOrGroup = z.union([token, group]);
 
 /* -----------------------------------------------------------------
-   Top‑level Design Token file with extra key‑name validation
+   Top‑level Design Token file (Format v1 + Modes draft)
 ------------------------------------------------------------------*/
 
 const reservedKeys = new Set([
@@ -241,15 +277,21 @@ const reservedKeys = new Set([
   '$deprecated',
   '$extensions',
   '$version',
+  '$name',
+  '$modes',
 ]);
 
 export const designTokenFile = z
   .object({
+    $name: z.string().optional(),
     $description: z.string().optional(),
     $version: z.string().optional(),
     $extensions: extensionsObj.optional(),
+    $modes: z.record(tokenOrGroup).optional(),
   })
+  // all remaining keys are groups or tokens
   .catchall(tokenOrGroup)
+  // custom name validation (no dot / braces / leading $)
   .superRefine((file, ctx) => {
     const badCharPattern = /[{}.]|^\$/;
 

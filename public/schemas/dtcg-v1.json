@@ -4,6 +4,9 @@
     "dtcg-v1": {
       "type": "object",
       "properties": {
+        "$name": {
+          "type": "string"
+        },
         "$description": {
           "type": "string"
         },
@@ -13,703 +16,730 @@
         "$extensions": {
           "type": "object",
           "additionalProperties": {}
-        }
-      },
-      "additionalProperties": {
-        "anyOf": [
-          {
+        },
+        "$modes": {
+          "type": "object",
+          "additionalProperties": {
             "anyOf": [
               {
-                "type": "object",
-                "properties": {
-                  "$value": {
-                    "anyOf": [
-                      {
-                        "type": "string",
-                        "pattern": "^\\{[^{}]+\\}$"
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "colorSpace": {
-                            "type": "string"
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "$value": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "pattern": "^\\{[^{}]+\\}$"
                           },
-                          "components": {
+                          {
+                            "type": "string",
+                            "pattern": "^#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "colorSpace": {
+                                "type": "string"
+                              },
+                              "components": {
+                                "type": "array",
+                                "items": {
+                                  "type": "number",
+                                  "minimum": 0,
+                                  "maximum": 1
+                                },
+                                "minItems": 3,
+                                "maxItems": 4
+                              },
+                              "alpha": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1
+                              },
+                              "hex": {
+                                "type": "string",
+                                "pattern": "^#?([0-9a-fA-F]{8}|[0-9a-fA-F]{6})$"
+                              }
+                            },
+                            "required": [
+                              "colorSpace",
+                              "components"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
+                      },
+                      "$type": {
+                        "type": "string",
+                        "const": "color"
+                      },
+                      "$description": {
+                        "type": "string"
+                      },
+                      "$extensions": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$extensions"
+                      },
+                      "$deprecated": {
+                        "type": [
+                          "boolean",
+                          "string"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "$value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "$value": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "value": {
+                                "type": "number"
+                              },
+                              "unit": {
+                                "type": "string",
+                                "enum": [
+                                  "px",
+                                  "rem",
+                                  "em",
+                                  "vw",
+                                  "vh",
+                                  "vmin",
+                                  "vmax",
+                                  "%",
+                                  "pt",
+                                  "pc",
+                                  "cm",
+                                  "mm",
+                                  "in",
+                                  "q",
+                                  "ch",
+                                  "ex",
+                                  "deg",
+                                  "rad",
+                                  "turn"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "value",
+                              "unit"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
+                      },
+                      "$type": {
+                        "type": "string",
+                        "const": "dimension"
+                      },
+                      "$description": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$description"
+                      },
+                      "$extensions": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$extensions"
+                      },
+                      "$deprecated": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$deprecated"
+                      }
+                    },
+                    "required": [
+                      "$value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "$value": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
+                          },
+                          {
+                            "type": "string",
+                            "minLength": 1
+                          }
+                        ]
+                      },
+                      "$type": {
+                        "type": "string",
+                        "const": "fontFamily"
+                      },
+                      "$description": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$description"
+                      },
+                      "$extensions": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$extensions"
+                      },
+                      "$deprecated": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$deprecated"
+                      }
+                    },
+                    "required": [
+                      "$value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "$value": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
+                          },
+                          {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 1000
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "thin",
+                              "extra-light",
+                              "light",
+                              "normal",
+                              "medium",
+                              "semi-bold",
+                              "bold",
+                              "extra-bold",
+                              "black"
+                            ]
+                          }
+                        ]
+                      },
+                      "$type": {
+                        "type": "string",
+                        "const": "fontWeight"
+                      },
+                      "$description": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$description"
+                      },
+                      "$extensions": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$extensions"
+                      },
+                      "$deprecated": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$deprecated"
+                      }
+                    },
+                    "required": [
+                      "$value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "$value": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "value": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "unit": {
+                                "type": "string",
+                                "enum": [
+                                  "ms",
+                                  "s"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "value",
+                              "unit"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
+                      },
+                      "$type": {
+                        "type": "string",
+                        "const": "duration"
+                      },
+                      "$description": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$description"
+                      },
+                      "$extensions": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$extensions"
+                      },
+                      "$deprecated": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$deprecated"
+                      }
+                    },
+                    "required": [
+                      "$value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "$value": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
+                          },
+                          {
                             "type": "array",
                             "items": {
-                              "type": "number",
-                              "minimum": 0,
-                              "maximum": 1
+                              "type": "number"
                             },
-                            "minItems": 3,
+                            "minItems": 4,
                             "maxItems": 4
+                          }
+                        ]
+                      },
+                      "$type": {
+                        "type": "string",
+                        "const": "cubicBezier"
+                      },
+                      "$description": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$description"
+                      },
+                      "$extensions": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$extensions"
+                      },
+                      "$deprecated": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$deprecated"
+                      }
+                    },
+                    "required": [
+                      "$value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "$value": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
                           },
-                          "alpha": {
-                            "type": "number",
-                            "minimum": 0,
-                            "maximum": 1
+                          {
+                            "type": "number"
+                          }
+                        ]
+                      },
+                      "$type": {
+                        "type": "string",
+                        "const": "number"
+                      },
+                      "$description": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$description"
+                      },
+                      "$extensions": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$extensions"
+                      },
+                      "$deprecated": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$deprecated"
+                      }
+                    },
+                    "required": [
+                      "$value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "$value": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
                           },
-                          "hex": {
-                            "type": "string",
-                            "pattern": "^#?([0-9a-fA-F]{8}|[0-9a-fA-F]{6})$"
+                          {
+                            "type": "object",
+                            "properties": {
+                              "width": {
+                                "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/1/properties/$value"
+                              },
+                              "color": {
+                                "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$value"
+                              }
+                            },
+                            "required": [
+                              "width",
+                              "color"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
+                      },
+                      "$type": {
+                        "type": "string",
+                        "const": "strokeStyle"
+                      },
+                      "$description": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$description"
+                      },
+                      "$extensions": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$extensions"
+                      },
+                      "$deprecated": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$deprecated"
+                      }
+                    },
+                    "required": [
+                      "$value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "$value": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "width": {
+                                "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/1/properties/$value"
+                              },
+                              "style": {
+                                "type": "string",
+                                "enum": [
+                                  "solid",
+                                  "dashed",
+                                  "dotted"
+                                ]
+                              },
+                              "color": {
+                                "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$value"
+                              }
+                            },
+                            "required": [
+                              "width",
+                              "style",
+                              "color"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
+                      },
+                      "$type": {
+                        "type": "string",
+                        "const": "border"
+                      },
+                      "$description": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$description"
+                      },
+                      "$extensions": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$extensions"
+                      },
+                      "$deprecated": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$deprecated"
+                      }
+                    },
+                    "required": [
+                      "$value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "$value": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "duration": {
+                                "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/4/properties/$value"
+                              },
+                              "timingFunction": {
+                                "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/5/properties/$value"
+                              },
+                              "delay": {
+                                "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/4/properties/$value"
+                              }
+                            },
+                            "required": [
+                              "duration",
+                              "timingFunction"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
+                      },
+                      "$type": {
+                        "type": "string",
+                        "const": "transition"
+                      },
+                      "$description": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$description"
+                      },
+                      "$extensions": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$extensions"
+                      },
+                      "$deprecated": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$deprecated"
+                      }
+                    },
+                    "required": [
+                      "$value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "$value": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "offsetX": {
+                                "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/1/properties/$value"
+                              },
+                              "offsetY": {
+                                "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/1/properties/$value"
+                              },
+                              "blur": {
+                                "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/1/properties/$value"
+                              },
+                              "spread": {
+                                "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/1/properties/$value"
+                              },
+                              "color": {
+                                "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$value"
+                              }
+                            },
+                            "required": [
+                              "offsetX",
+                              "offsetY",
+                              "blur",
+                              "spread",
+                              "color"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
+                      },
+                      "$type": {
+                        "type": "string",
+                        "const": "shadow"
+                      },
+                      "$description": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$description"
+                      },
+                      "$extensions": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$extensions"
+                      },
+                      "$deprecated": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$deprecated"
+                      }
+                    },
+                    "required": [
+                      "$value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "$value": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "linear",
+                                  "radial",
+                                  "conic"
+                                ]
+                              },
+                              "stops": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "position": {
+                                      "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/6/properties/$value"
+                                    },
+                                    "color": {
+                                      "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$value"
+                                    }
+                                  },
+                                  "required": [
+                                    "position",
+                                    "color"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "minItems": 2
+                              }
+                            },
+                            "required": [
+                              "type",
+                              "stops"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
+                      },
+                      "$type": {
+                        "type": "string",
+                        "const": "gradient"
+                      },
+                      "$description": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$description"
+                      },
+                      "$extensions": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$extensions"
+                      },
+                      "$deprecated": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$deprecated"
+                      }
+                    },
+                    "required": [
+                      "$value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "$value": {
+                        "type": "object",
+                        "properties": {
+                          "fontFamily": {
+                            "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/2/properties/$value"
+                          },
+                          "fontSize": {
+                            "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/1/properties/$value"
+                          },
+                          "fontWeight": {
+                            "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/3/properties/$value"
+                          },
+                          "letterSpacing": {
+                            "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/1/properties/$value"
+                          },
+                          "lineHeight": {
+                            "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/6/properties/$value"
                           }
                         },
                         "required": [
-                          "colorSpace",
-                          "components"
+                          "fontFamily",
+                          "fontSize",
+                          "fontWeight",
+                          "letterSpacing",
+                          "lineHeight"
                         ],
                         "additionalProperties": false
+                      },
+                      "$type": {
+                        "type": "string",
+                        "const": "typography"
+                      },
+                      "$description": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$description"
+                      },
+                      "$extensions": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$extensions"
+                      },
+                      "$deprecated": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$deprecated"
                       }
-                    ]
+                    },
+                    "required": [
+                      "$value"
+                    ],
+                    "additionalProperties": false
                   },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "$value": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
+                      },
+                      "$description": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$description"
+                      },
+                      "$extensions": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$extensions"
+                      },
+                      "$deprecated": {
+                        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$deprecated"
+                      }
+                    },
+                    "required": [
+                      "$value"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
                   "$type": {
                     "type": "string",
-                    "const": "color"
+                    "enum": [
+                      "color",
+                      "dimension",
+                      "fontFamily",
+                      "fontWeight",
+                      "duration",
+                      "cubicBezier",
+                      "number",
+                      "strokeStyle",
+                      "border",
+                      "transition",
+                      "shadow",
+                      "gradient",
+                      "typography"
+                    ]
                   },
                   "$description": {
                     "type": "string"
                   },
                   "$extensions": {
                     "$ref": "#/definitions/dtcg-v1/properties/$extensions"
-                  },
-                  "$deprecated": {
-                    "type": [
-                      "boolean",
-                      "string"
-                    ]
                   }
                 },
-                "required": [
-                  "$value"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "$value": {
-                    "anyOf": [
-                      {
-                        "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "number"
-                          },
-                          "unit": {
-                            "type": "string",
-                            "enum": [
-                              "px",
-                              "rem"
-                            ]
-                          }
-                        },
-                        "required": [
-                          "value",
-                          "unit"
-                        ],
-                        "additionalProperties": false
-                      }
-                    ]
-                  },
-                  "$type": {
-                    "type": "string",
-                    "const": "dimension"
-                  },
-                  "$description": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$description"
-                  },
-                  "$extensions": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$extensions"
-                  },
-                  "$deprecated": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$deprecated"
-                  }
-                },
-                "required": [
-                  "$value"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "$value": {
-                    "anyOf": [
-                      {
-                        "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
-                      },
-                      {
-                        "type": "string",
-                        "minLength": 1
-                      }
-                    ]
-                  },
-                  "$type": {
-                    "type": "string",
-                    "const": "fontFamily"
-                  },
-                  "$description": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$description"
-                  },
-                  "$extensions": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$extensions"
-                  },
-                  "$deprecated": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$deprecated"
-                  }
-                },
-                "required": [
-                  "$value"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "$value": {
-                    "anyOf": [
-                      {
-                        "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
-                      },
-                      {
-                        "type": "integer",
-                        "minimum": 1,
-                        "maximum": 1000
-                      },
-                      {
-                        "type": "string",
-                        "enum": [
-                          "thin",
-                          "extra-light",
-                          "light",
-                          "normal",
-                          "medium",
-                          "semi-bold",
-                          "bold",
-                          "extra-bold",
-                          "black"
-                        ]
-                      }
-                    ]
-                  },
-                  "$type": {
-                    "type": "string",
-                    "const": "fontWeight"
-                  },
-                  "$description": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$description"
-                  },
-                  "$extensions": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$extensions"
-                  },
-                  "$deprecated": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$deprecated"
-                  }
-                },
-                "required": [
-                  "$value"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "$value": {
-                    "anyOf": [
-                      {
-                        "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "value": {
-                            "type": "number",
-                            "minimum": 0
-                          },
-                          "unit": {
-                            "type": "string",
-                            "enum": [
-                              "ms",
-                              "s"
-                            ]
-                          }
-                        },
-                        "required": [
-                          "value",
-                          "unit"
-                        ],
-                        "additionalProperties": false
-                      }
-                    ]
-                  },
-                  "$type": {
-                    "type": "string",
-                    "const": "duration"
-                  },
-                  "$description": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$description"
-                  },
-                  "$extensions": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$extensions"
-                  },
-                  "$deprecated": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$deprecated"
-                  }
-                },
-                "required": [
-                  "$value"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "$value": {
-                    "anyOf": [
-                      {
-                        "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
-                      },
-                      {
-                        "type": "array",
-                        "items": {
-                          "type": "number"
-                        },
-                        "minItems": 4,
-                        "maxItems": 4
-                      }
-                    ]
-                  },
-                  "$type": {
-                    "type": "string",
-                    "const": "cubicBezier"
-                  },
-                  "$description": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$description"
-                  },
-                  "$extensions": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$extensions"
-                  },
-                  "$deprecated": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$deprecated"
-                  }
-                },
-                "required": [
-                  "$value"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "$value": {
-                    "anyOf": [
-                      {
-                        "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
-                      },
-                      {
-                        "type": "number"
-                      }
-                    ]
-                  },
-                  "$type": {
-                    "type": "string",
-                    "const": "number"
-                  },
-                  "$description": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$description"
-                  },
-                  "$extensions": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$extensions"
-                  },
-                  "$deprecated": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$deprecated"
-                  }
-                },
-                "required": [
-                  "$value"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "$value": {
-                    "anyOf": [
-                      {
-                        "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "width": {
-                            "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/1/properties/$value"
-                          },
-                          "color": {
-                            "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value"
-                          }
-                        },
-                        "required": [
-                          "width",
-                          "color"
-                        ],
-                        "additionalProperties": false
-                      }
-                    ]
-                  },
-                  "$type": {
-                    "type": "string",
-                    "const": "strokeStyle"
-                  },
-                  "$description": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$description"
-                  },
-                  "$extensions": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$extensions"
-                  },
-                  "$deprecated": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$deprecated"
-                  }
-                },
-                "required": [
-                  "$value"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "$value": {
-                    "anyOf": [
-                      {
-                        "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "width": {
-                            "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/1/properties/$value"
-                          },
-                          "style": {
-                            "type": "string",
-                            "enum": [
-                              "solid",
-                              "dashed",
-                              "dotted"
-                            ]
-                          },
-                          "color": {
-                            "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value"
-                          }
-                        },
-                        "required": [
-                          "width",
-                          "style",
-                          "color"
-                        ],
-                        "additionalProperties": false
-                      }
-                    ]
-                  },
-                  "$type": {
-                    "type": "string",
-                    "const": "border"
-                  },
-                  "$description": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$description"
-                  },
-                  "$extensions": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$extensions"
-                  },
-                  "$deprecated": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$deprecated"
-                  }
-                },
-                "required": [
-                  "$value"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "$value": {
-                    "anyOf": [
-                      {
-                        "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "duration": {
-                            "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/4/properties/$value"
-                          },
-                          "timingFunction": {
-                            "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/5/properties/$value"
-                          },
-                          "delay": {
-                            "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/4/properties/$value"
-                          }
-                        },
-                        "required": [
-                          "duration",
-                          "timingFunction"
-                        ],
-                        "additionalProperties": false
-                      }
-                    ]
-                  },
-                  "$type": {
-                    "type": "string",
-                    "const": "transition"
-                  },
-                  "$description": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$description"
-                  },
-                  "$extensions": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$extensions"
-                  },
-                  "$deprecated": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$deprecated"
-                  }
-                },
-                "required": [
-                  "$value"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "$value": {
-                    "anyOf": [
-                      {
-                        "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "offsetX": {
-                            "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/1/properties/$value"
-                          },
-                          "offsetY": {
-                            "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/1/properties/$value"
-                          },
-                          "blur": {
-                            "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/1/properties/$value"
-                          },
-                          "spread": {
-                            "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/1/properties/$value"
-                          },
-                          "color": {
-                            "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value"
-                          }
-                        },
-                        "required": [
-                          "offsetX",
-                          "offsetY",
-                          "blur",
-                          "spread",
-                          "color"
-                        ],
-                        "additionalProperties": false
-                      }
-                    ]
-                  },
-                  "$type": {
-                    "type": "string",
-                    "const": "shadow"
-                  },
-                  "$description": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$description"
-                  },
-                  "$extensions": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$extensions"
-                  },
-                  "$deprecated": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$deprecated"
-                  }
-                },
-                "required": [
-                  "$value"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "$value": {
-                    "anyOf": [
-                      {
-                        "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
-                      },
-                      {
-                        "type": "object",
-                        "properties": {
-                          "type": {
-                            "type": "string",
-                            "enum": [
-                              "linear",
-                              "radial",
-                              "conic"
-                            ]
-                          },
-                          "stops": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "position": {
-                                  "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/6/properties/$value"
-                                },
-                                "color": {
-                                  "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value"
-                                }
-                              },
-                              "required": [
-                                "position",
-                                "color"
-                              ],
-                              "additionalProperties": false
-                            },
-                            "minItems": 2
-                          }
-                        },
-                        "required": [
-                          "type",
-                          "stops"
-                        ],
-                        "additionalProperties": false
-                      }
-                    ]
-                  },
-                  "$type": {
-                    "type": "string",
-                    "const": "gradient"
-                  },
-                  "$description": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$description"
-                  },
-                  "$extensions": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$extensions"
-                  },
-                  "$deprecated": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$deprecated"
-                  }
-                },
-                "required": [
-                  "$value"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "$value": {
-                    "type": "object",
-                    "properties": {
-                      "fontFamily": {
-                        "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/2/properties/$value"
-                      },
-                      "fontSize": {
-                        "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/1/properties/$value"
-                      },
-                      "fontWeight": {
-                        "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/3/properties/$value"
-                      },
-                      "letterSpacing": {
-                        "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/1/properties/$value"
-                      },
-                      "lineHeight": {
-                        "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/6/properties/$value"
-                      }
-                    },
-                    "required": [
-                      "fontFamily",
-                      "fontSize",
-                      "fontWeight",
-                      "letterSpacing",
-                      "lineHeight"
-                    ],
-                    "additionalProperties": false
-                  },
-                  "$type": {
-                    "type": "string",
-                    "const": "typography"
-                  },
-                  "$description": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$description"
-                  },
-                  "$extensions": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$extensions"
-                  },
-                  "$deprecated": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$deprecated"
-                  }
-                },
-                "required": [
-                  "$value"
-                ],
-                "additionalProperties": false
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "$value": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
-                  },
-                  "$description": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$description"
-                  },
-                  "$extensions": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$extensions"
-                  },
-                  "$deprecated": {
-                    "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$deprecated"
-                  }
-                },
-                "required": [
-                  "$value"
-                ],
-                "additionalProperties": false
+                "additionalProperties": {
+                  "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties"
+                }
               }
             ]
-          },
-          {
-            "type": "object",
-            "properties": {
-              "$type": {
-                "type": "string",
-                "enum": [
-                  "color",
-                  "dimension",
-                  "fontFamily",
-                  "fontWeight",
-                  "duration",
-                  "cubicBezier",
-                  "number",
-                  "strokeStyle",
-                  "border",
-                  "transition",
-                  "shadow",
-                  "gradient",
-                  "typography"
-                ]
-              },
-              "$description": {
-                "type": "string"
-              },
-              "$extensions": {
-                "$ref": "#/definitions/dtcg-v1/properties/$extensions"
-              }
-            },
-            "additionalProperties": {
-              "$ref": "#/definitions/dtcg-v1/additionalProperties"
-            }
           }
-        ]
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties"
       }
     }
   },
