@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prebuild": "tsx scripts/generate_dtcg_schema.ts"
+    "prebuild": "tsx scripts/generate_dtcg_schema.ts",
+    "test": "vitest run"
   },
   "keywords": [],
   "author": "",
@@ -18,9 +19,11 @@
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "jest": "^30.0.3",
+    "json-schema-deref-sync": "^0.14.0",
     "ts-jest": "^29.4.0",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3",
+    "vitest": "^3.2.4",
     "zod": "^3.25.67"
   }
 }
