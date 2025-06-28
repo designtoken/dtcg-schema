@@ -25,24 +25,7 @@ const aliasRef = z.string().regex(/^\{[^{}]+\}$/);
 // 1. Dimension (expanded unit list per Format §8.2)
 const dimensionUnit = z.enum([
   'px',
-  'rem',
-  'em',
-  'vw',
-  'vh',
-  'vmin',
-  'vmax',
-  '%',
-  'pt',
-  'pc',
-  'cm',
-  'mm',
-  'in',
-  'q',
-  'ch',
-  'ex',
-  'deg',
-  'rad',
-  'turn',
+  'rem'
 ]);
 const dimensionObj = z.object({
   value: z.number(),
@@ -62,7 +45,7 @@ const colorObj = z.object({
     .regex(/^#?([0-9a-fA-F]{8}|[0-9a-fA-F]{6})$/)
     .optional(),
 });
-const colorVal = z.union([aliasRef, hexColor, colorObj]);
+const colorVal = z.union([aliasRef, colorObj]);
 
 // 3. Font family
 const fontFamilyVal = z.union([aliasRef, z.string().min(1)]);
@@ -93,7 +76,22 @@ const durationObj = z.object({
 const durationVal = z.union([aliasRef, durationObj]);
 
 // 6. Cubic Bézier
-const cubicBezierVal = z.union([aliasRef, z.array(z.number()).length(4)]);
+const cubicBezierVal = z.union([
+  aliasRef,
+  z
+    .array(z.number())
+    .length(4)
+    .superRefine((val, ctx) => {
+      const [x1, , x2] = val;          // ignore y1 (index 1) & y2 (index 3)
+      if (x1 < 0 || x1 > 1 || x2 < 0 || x2 > 1) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message:
+            'For cubic-Bezier, positions 0 and 2 (the X-values) must be between 0 and 1 inclusive',
+        });
+      }
+    }),
+]);
 
 // 7. Number
 const numberVal = z.union([aliasRef, z.number()]);

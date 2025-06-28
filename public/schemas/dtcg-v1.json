@@ -33,10 +33,6 @@
                             "pattern": "^\\{[^{}]+\\}$"
                           },
                           {
-                            "type": "string",
-                            "pattern": "^#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
-                          },
-                          {
                             "type": "object",
                             "properties": {
                               "colorSpace": {
@@ -110,24 +106,7 @@
                                 "type": "string",
                                 "enum": [
                                   "px",
-                                  "rem",
-                                  "em",
-                                  "vw",
-                                  "vh",
-                                  "vmin",
-                                  "vmax",
-                                  "%",
-                                  "pt",
-                                  "pc",
-                                  "cm",
-                                  "mm",
-                                  "in",
-                                  "q",
-                                  "ch",
-                                  "ex",
-                                  "deg",
-                                  "rad",
-                                  "turn"
+                                  "rem"
                                 ]
                               }
                             },
