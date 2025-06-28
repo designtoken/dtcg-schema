@@ -346,18 +346,40 @@
                             "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
                           },
                           {
+                            "type": "string",
+                            "enum": [
+                              "solid",
+                              "dashed",
+                              "dotted",
+                              "double",
+                              "groove",
+                              "ridge",
+                              "outset",
+                              "inset"
+                            ]
+                          },
+                          {
                             "type": "object",
                             "properties": {
-                              "width": {
-                                "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/1/properties/$value"
+                              "dashArray": {
+                                "type": "array",
+                                "items": {
+                                  "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/1/properties/$value"
+                                },
+                                "minItems": 2
                               },
-                              "color": {
-                                "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$value"
+                              "lineCap": {
+                                "type": "string",
+                                "enum": [
+                                  "butt",
+                                  "round",
+                                  "square"
+                                ]
                               }
                             },
                             "required": [
-                              "width",
-                              "color"
+                              "dashArray",
+                              "lineCap"
                             ],
                             "additionalProperties": false
                           }
@@ -397,12 +419,7 @@
                                 "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/1/properties/$value"
                               },
                               "style": {
-                                "type": "string",
-                                "enum": [
-                                  "solid",
-                                  "dashed",
-                                  "dotted"
-                                ]
+                                "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/7/properties/$value/anyOf/1"
                               },
                               "color": {
                                 "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$value"

@@ -116,19 +116,33 @@ const baseTypes = z.enum([
 
 /* ───────────────────────── composite value schemas ────────────────────────── */
 
+/* ────────────  Stroke-style token  (Format §9.2) ────────────
+   Value MAY be:
+   • one of the 8 CSS border-style keywords, **or**
+   • object { dashArray, lineCap }
+   (An alias reference '{…}' is always permitted – Format §6.2)
+---------------------------------------------------------------- */
+const strokeKeyword = z.enum([
+  'solid', 'dashed', 'dotted', 'double',
+  'groove', 'ridge', 'outset', 'inset'
+]);
 const strokeStyleVal = z.union([
   aliasRef,
+  strokeKeyword,
   z.object({
-    width: dimensionVal,
-    color: colorVal,
+    dashArray: z.array(dimensionVal).min(2),          // two or more lengths
+    lineCap:  z.enum(['butt', 'round', 'square']),
   }),
 ]);
 
+/*  Border token  (Format §9.3) ────────────
+   width, style (same 8 keywords), color
+---------------------------------------------------------------- */
 const borderVal = z.union([
   aliasRef,
   z.object({
     width: dimensionVal,
-    style: z.enum(['solid', 'dashed', 'dotted']),
+    style: strokeKeyword,    // full keyword set
     color: colorVal,
   }),
 ]);
