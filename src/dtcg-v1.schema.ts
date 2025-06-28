@@ -142,9 +142,9 @@ const borderVal = z.union([
   aliasRef,
   z.object({
     width: dimensionVal,
-    style: strokeKeyword,    // full keyword set
+    style: strokeStyleVal,    // full keyword set
     color: colorVal,
-  }),
+  })
 ]);
 
 const transitionVal = z.union([
