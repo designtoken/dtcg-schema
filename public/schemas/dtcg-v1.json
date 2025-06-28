@@ -419,7 +419,7 @@
                                 "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/1/properties/$value"
                               },
                               "style": {
-                                "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/7/properties/$value/anyOf/1"
+                                "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/7/properties/$value"
                               },
                               "color": {
                                 "$ref": "#/definitions/dtcg-v1/properties/$modes/additionalProperties/anyOf/0/anyOf/0/properties/$value"
