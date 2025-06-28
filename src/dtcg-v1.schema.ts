@@ -1,189 +1,274 @@
 import { z } from 'zod';
 
+/* ───────────────────────── shared metadata ────────────────────────── */
+
+const extensionsKeyPattern = /^[a-z0-9]+(\.[a-z0-9-]+)+$/i;
+const extensionsObj = z
+  .record(z.any())
+  .refine(obj => Object.keys(obj).every(k => extensionsKeyPattern.test(k)), {
+    message: 'extension keys must be vendor-scoped, e.g. "com.example"',
+  });
+
+const meta = {
+  $description: z.string().optional(),
+  $extensions: extensionsObj.optional(),
+  $deprecated: z.union([z.boolean(), z.string()]).optional(),
+};
+
 /* ───────────────────────── helpers ────────────────────────── */
 
-// reference “{group.token}”
+// design‑token alias reference → "{group.token}" (Format §6.2)
 const aliasRef = z.string().regex(/^\{[^{}]+\}$/);
 
-// basic reusable pieces
+// ─── reusable primitive fragments ───
+
 const dimensionObj = z.object({
   value: z.number(),
-  unit: z.enum(['px', 'rem']),                           // §8.2.1 Validation :contentReference[oaicite:0]{index=0}
+  unit: z.enum(['px', 'rem']), // §8.2.1 Validation
 });
 const dimensionVal = z.union([aliasRef, dimensionObj]);
 
 const colorComponent = z.number().min(0).max(1);
 const colorObj = z.object({
   colorSpace: z.string(),
-  components: z
-    .array(colorComponent)
-    .refine(a => a.length === 3 || a.length === 4),
+  components: z.array(colorComponent).min(3).max(4),
   alpha: z.number().min(0).max(1).optional(),
-  hex: z.string().regex(/^#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/).optional(),
+  hex: z.string().regex(/^#?([0-9a-fA-F]{8}|[0-9a-fA-F]{6})$/).optional(),
 });
-const colorVal   = z.union([aliasRef, colorObj]);
-const numberVal  = z.union([aliasRef, z.number()]);
+const colorVal = z.union([aliasRef, colorObj]);
+
+const fontFamilyVal = z.union([aliasRef, z.string().min(1)]);
+
+const weightKeyword = z.enum([
+  'thin',
+  'extra-light',
+  'light',
+  'normal',
+  'medium',
+  'semi-bold',
+  'bold',
+  'extra-bold',
+  'black',
+]);
+const fontWeightVal = z.union([
+  aliasRef,
+  z.number().int().min(1).max(1000),
+  weightKeyword,
+]);
+
 const durationObj = z.object({
-  value: z.number(),
+  value: z.number().min(0),
   unit: z.enum(['ms', 's']),
 });
 const durationVal = z.union([aliasRef, durationObj]);
-const cubicBezierVal = z.union([
-  aliasRef,
-  z.tuple([
-    z.number().min(0).max(1),
-    z.number(),
-    z.number().min(0).max(1),
-    z.number(),
-  ]),
-]);
-const fontFamilyVal  = z.union([aliasRef, z.string(), z.array(z.string()).nonempty()]);
-const fontWeightVal  = z.union([
-  aliasRef,
-  z.number().int().min(1).max(1000),
-  z.enum([
-    'thin','hairline','extra-light','ultra-light','light',
-    'normal','regular','book','medium','semi-bold','demi-bold',
-    'bold','extra-bold','ultra-bold','black','heavy',
-    'extra-black','ultra-black',
-  ]),
-]);
 
-const extensionKeyPattern = /^[a-z0-9]+(\.[a-z0-9-]+)+$/i;
+const cubicBezierVal = z.union([aliasRef, z.array(z.number()).length(4)]);
 
-const extensionsObj = z
-  .record(z.any())
-  .refine(
-    obj => Object.keys(obj).every(k => extensionKeyPattern.test(k)),
-    { message: 'extension keys must be vendor-scoped, e.g. "com.example"' },
-  );
+const numberVal = z.union([aliasRef, z.number()]);
+
+// every primitive & composite $type value in the 2025‑06‑26 drafts
+const baseTypes = z.enum([
+  'color',
+  'dimension',
+  'fontFamily',
+  'fontWeight',
+  'duration',
+  'cubicBezier',
+  'number',
+  'strokeStyle',
+  'border',
+  'transition',
+  'shadow',
+  'gradient',
+  'typography',
+]);
 
 /* ───────────────────────── composite value schemas ────────────────────────── */
 
-// §9.2 strokeStyle – string OR object                              :contentReference[oaicite:1]{index=1}
-const strokeString = z.enum([
-  'solid','dashed','dotted','double','groove','ridge','outset','inset',
+const strokeStyleVal = z.union([
+  aliasRef,
+  z.object({
+    width: dimensionVal,
+    color: colorVal,
+  }),
 ]);
-const strokeObject = z.object({
-  dashArray: z.array(dimensionVal).nonempty(),
-  lineCap: z.enum(['round','butt','square']),
-});
-const strokeStyleVal = z.union([aliasRef, strokeString, strokeObject]);
 
-// §9.3 border                                                      :contentReference[oaicite:2]{index=2}
-const borderVal = z.object({
-  color: colorVal,
-  width: dimensionVal,
-  style: strokeStyleVal,
-});
+const borderVal = z.union([
+  aliasRef,
+  z.object({
+    width: dimensionVal,
+    style: z.enum(['solid', 'dashed', 'dotted']),
+    color: colorVal,
+  }),
+]);
 
-// §9.4 transition                                                  :contentReference[oaicite:3]{index=3}
-const transitionVal = z.object({
-  duration: durationVal,
-  delay: durationVal,
-  timingFunction: cubicBezierVal,
-});
+const transitionVal = z.union([
+  aliasRef,
+  z.object({
+    duration: durationVal,
+    timingFunction: cubicBezierVal,
+    delay: durationVal.optional(),
+  }),
+]);
 
-// §9.5 shadow                                                      :contentReference[oaicite:4]{index=4}
-const singleShadow = z.object({
-  color: colorVal,
-  offsetX: dimensionVal,
-  offsetY: dimensionVal,
-  blur:    dimensionVal,
-  spread:  dimensionVal,
-  inset:   z.boolean().optional(),
-});
-const shadowVal = z.union([singleShadow, z.array(singleShadow).nonempty()]);
+const shadowVal = z.union([
+  aliasRef,
+  z.object({
+    offsetX: dimensionVal,
+    offsetY: dimensionVal,
+    blur: dimensionVal,
+    spread: dimensionVal,
+    color: colorVal,
+  }),
+]);
 
-// §9.6 gradient                                                    :contentReference[oaicite:5]{index=5}
-const gradientStop = z.object({
-  color: colorVal,
-  position: numberVal,      // spec clamps to [0,1]; caller may enforce if desired
-});
-const gradientVal = z.array(gradientStop).nonempty();
+const gradientVal = z.union([
+  aliasRef,
+  z.object({
+    type: z.enum(['linear', 'radial', 'conic']),
+    stops: z
+      .array(
+        z.object({
+          position: numberVal,
+          color: colorVal,
+        }),
+      )
+      .min(2),
+  }),
+]);
 
-// §9.7 typography                                                  :contentReference[oaicite:6]{index=6}
 const typographyVal = z.object({
-  fontFamily:    fontFamilyVal,
-  fontSize:      dimensionVal,
-  fontWeight:    fontWeightVal,
+  fontFamily: fontFamilyVal,
+  fontSize: dimensionVal,
+  fontWeight: fontWeightVal,
   letterSpacing: dimensionVal,
-  lineHeight:    numberVal,
+  lineHeight: numberVal,
 });
 
-/* ───────────────────────── shared metadata ────────────────────────── */
+/* ───────────────────────── leaf‑token builder ────────────────────────── */
 
-const meta = {
-  $description: z.string().optional(),
-  $extensions : extensionsObj.optional(),            // §5.2.3 Extensions :contentReference[oaicite:7]{index=7}
-  $deprecated : z.union([z.boolean(), z.string()]).optional(),
-};
+const leafToken = <T extends z.ZodTypeAny>(valueSchema: T, literalType: z.infer<typeof baseTypes>) =>
+  z
+    .object({
+      $value: valueSchema,
+      $type: z.literal(literalType).optional(), // MAY inherit
+      ...meta,
+    })
+    .strict();
 
 /* ───────────────────────── token variants ────────────────────────── */
 
-// base-type tokens
-const colorToken       = z.object({ $type: z.literal('color'),       $value: colorVal,       ...meta }).strict();
-const dimensionToken   = z.object({ $type: z.literal('dimension'),   $value: dimensionVal,   ...meta }).strict();
-const fontFamilyToken  = z.object({ $type: z.literal('fontFamily'),  $value: fontFamilyVal,  ...meta }).strict();
-const fontWeightToken  = z.object({ $type: z.literal('fontWeight'),  $value: fontWeightVal,  ...meta }).strict();
-const durationToken    = z.object({ $type: z.literal('duration'),    $value: durationVal,    ...meta }).strict();
-const cubicBezierToken = z.object({ $type: z.literal('cubicBezier'), $value: cubicBezierVal, ...meta }).strict();
-const numberToken      = z.object({ $type: z.literal('number'),      $value: numberVal,      ...meta }).strict();
+const colorToken = leafToken(colorVal, 'color');
+const dimensionToken = leafToken(dimensionVal, 'dimension');
+const fontFamilyToken = leafToken(fontFamilyVal, 'fontFamily');
+const fontWeightToken = leafToken(fontWeightVal, 'fontWeight');
+const durationToken = leafToken(durationVal, 'duration');
+const cubicBezierToken = leafToken(cubicBezierVal, 'cubicBezier');
+const numberToken = leafToken(numberVal, 'number');
+const strokeStyleToken = leafToken(strokeStyleVal, 'strokeStyle');
+const borderToken = leafToken(borderVal, 'border');
+const transitionToken = leafToken(transitionVal, 'transition');
+const shadowToken = leafToken(shadowVal, 'shadow');
+const gradientToken = leafToken(gradientVal, 'gradient');
+const typographyToken = leafToken(typographyVal, 'typography');
 
-// composite-type tokens
-const strokeStyleToken = z.object({ $type: z.literal('strokeStyle'), $value: strokeStyleVal, ...meta }).strict();
-const borderToken      = z.object({ $type: z.literal('border'),      $value: borderVal,      ...meta }).strict();
-const transitionToken  = z.object({ $type: z.literal('transition'),  $value: transitionVal,  ...meta }).strict();
-const shadowToken      = z.object({ $type: z.literal('shadow'),      $value: shadowVal,      ...meta }).strict();
-const gradientToken    = z.object({ $type: z.literal('gradient'),    $value: gradientVal,    ...meta }).strict();
-const typographyToken  = z.object({ $type: z.literal('typography'),  $value: typographyVal,  ...meta }).strict();
-
-// alias-only token — must have NO $type
+// alias‑only token — MUST have no $type
 const aliasToken = z
-  .object({ $value: aliasRef, ...meta })
-  .passthrough()                                           // keep unknown future $-props
-  .refine(o => !('$type' in o), { message: 'Pure alias tokens MUST NOT have a $type' });
-
-/* ───────────────────────── final export ────────────────────────── */
+  .object({
+    $value: aliasRef,
+    ...meta,
+  })
+  .strict()
+  .refine(o => !('$type' in o), {
+    message: 'Pure alias tokens MUST NOT have a $type',
+  });
 
 export const token = z.union([
-  colorToken, dimensionToken, fontFamilyToken, fontWeightToken,
-  durationToken, cubicBezierToken, numberToken,
-  strokeStyleToken, borderToken, transitionToken,
-  shadowToken, gradientToken, typographyToken,
+  colorToken,
+  dimensionToken,
+  fontFamilyToken,
+  fontWeightToken,
+  durationToken,
+  cubicBezierToken,
+  numberToken,
+  strokeStyleToken,
+  borderToken,
+  transitionToken,
+  shadowToken,
+  gradientToken,
+  typographyToken,
   aliasToken,
 ]);
 
 /* -----------------------------------------------------------------
-     Forward declaration so `group` and `tokenOrGroup` can refer
-      to each other without circular-reference errors
+   Forward declaration so `group` and `tokenOrGroup` can refer
+   to each other without circular-reference errors
 ------------------------------------------------------------------*/
-let tokenOrGroup!: z.ZodType<any>;
+let tokenOrGroup: z.ZodTypeAny;
 
-/* -----------------------------------------------------------------
-   Group schema (recursively nest tokens or further groups)
-      – only $description and $extensions are reserved; every
-        other key must be a token or another group
-------------------------------------------------------------------*/
+// ─── group schema (MAY declare $type, never $value) ───
 const group = z.lazy(() =>
   z
     .object({
+      $type: baseTypes.optional(),
       $description: z.string().optional(),
-      $extensions : extensionsObj.optional(),
+      $extensions: extensionsObj.optional(),
     })
-    .catchall(tokenOrGroup),          // everything else = token | group
+    // children — placed before superRefine so .catchall lives on ZodObject
+    .catchall(tokenOrGroup)
+    // forbid $value inside a group
+    .superRefine((obj, ctx) => {
+      if ('$value' in obj) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: '$value is not allowed on a group (only on tokens)',
+          path: ['$value'],
+        });
+      }
+    }),
 );
 
-/* -----------------------------------------------------------------
-   Now that `group` exists we can define the union
-------------------------------------------------------------------*/
 tokenOrGroup = z.union([token, group]);
 
+/* -----------------------------------------------------------------
+   Top‑level Design Token file with extra key‑name validation
+------------------------------------------------------------------*/
 
+const reservedKeys = new Set([
+  '$value',
+  '$type',
+  '$description',
+  '$deprecated',
+  '$extensions',
+  '$version',
+]);
 
-/** Top-level file schema */
-export const designTokenFile = z.object({
-  $description: z.string().optional(),     // §6.1.1
-  $extensions : extensionsObj.optional(),  // §6.1.3
-  $version    : z.string().optional(),     // *non-standard, tolerated*
-}).catchall(tokenOrGroup);                 // every other key = token or group
+export const designTokenFile = z
+  .object({
+    $description: z.string().optional(),
+    $version: z.string().optional(),
+    $extensions: extensionsObj.optional(),
+  })
+  .catchall(tokenOrGroup)
+  .superRefine((file, ctx) => {
+    const badCharPattern = /[{}.]|^\$/;
+
+    const walk = (obj: unknown, path: (string | number)[]): void => {
+      if (obj && typeof obj === 'object') {
+        for (const [key, value] of Object.entries(obj as Record<string, unknown>)) {
+          if (!reservedKeys.has(key) && badCharPattern.test(key)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: `Invalid token / group name "${key}" — must not start with '$' or contain '{}' or '.'`,
+              path: [...path, key],
+            });
+          }
+          walk(value, [...path, key]);
+        }
+      }
+    };
+
+    walk(file, []);
+  });
+
+export type DesignTokenFile = z.infer<typeof designTokenFile>;

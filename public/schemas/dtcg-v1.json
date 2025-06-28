@@ -7,12 +7,12 @@
         "$description": {
           "type": "string"
         },
+        "$version": {
+          "type": "string"
+        },
         "$extensions": {
           "type": "object",
           "additionalProperties": {}
-        },
-        "$version": {
-          "type": "string"
         }
       },
       "additionalProperties": {
@@ -22,10 +22,6 @@
               {
                 "type": "object",
                 "properties": {
-                  "$type": {
-                    "type": "string",
-                    "const": "color"
-                  },
                   "$value": {
                     "anyOf": [
                       {
@@ -44,7 +40,9 @@
                               "type": "number",
                               "minimum": 0,
                               "maximum": 1
-                            }
+                            },
+                            "minItems": 3,
+                            "maxItems": 4
                           },
                           "alpha": {
                             "type": "number",
@@ -53,7 +51,7 @@
                           },
                           "hex": {
                             "type": "string",
-                            "pattern": "^#(?:[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
+                            "pattern": "^#?([0-9a-fA-F]{8}|[0-9a-fA-F]{6})$"
                           }
                         },
                         "required": [
@@ -63,6 +61,10 @@
                         "additionalProperties": false
                       }
                     ]
+                  },
+                  "$type": {
+                    "type": "string",
+                    "const": "color"
                   },
                   "$description": {
                     "type": "string"
@@ -78,7 +80,6 @@
                   }
                 },
                 "required": [
-                  "$type",
                   "$value"
                 ],
                 "additionalProperties": false
@@ -86,10 +87,6 @@
               {
                 "type": "object",
                 "properties": {
-                  "$type": {
-                    "type": "string",
-                    "const": "dimension"
-                  },
                   "$value": {
                     "anyOf": [
                       {
@@ -117,6 +114,10 @@
                       }
                     ]
                   },
+                  "$type": {
+                    "type": "string",
+                    "const": "dimension"
+                  },
                   "$description": {
                     "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$description"
                   },
@@ -128,7 +129,6 @@
                   }
                 },
                 "required": [
-                  "$type",
                   "$value"
                 ],
                 "additionalProperties": false
@@ -136,26 +136,20 @@
               {
                 "type": "object",
                 "properties": {
-                  "$type": {
-                    "type": "string",
-                    "const": "fontFamily"
-                  },
                   "$value": {
                     "anyOf": [
                       {
                         "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
                       },
                       {
-                        "type": "string"
-                      },
-                      {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        },
-                        "minItems": 1
+                        "type": "string",
+                        "minLength": 1
                       }
                     ]
+                  },
+                  "$type": {
+                    "type": "string",
+                    "const": "fontFamily"
                   },
                   "$description": {
                     "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$description"
@@ -168,7 +162,6 @@
                   }
                 },
                 "required": [
-                  "$type",
                   "$value"
                 ],
                 "additionalProperties": false
@@ -176,10 +169,6 @@
               {
                 "type": "object",
                 "properties": {
-                  "$type": {
-                    "type": "string",
-                    "const": "fontWeight"
-                  },
                   "$value": {
                     "anyOf": [
                       {
@@ -194,26 +183,21 @@
                         "type": "string",
                         "enum": [
                           "thin",
-                          "hairline",
                           "extra-light",
-                          "ultra-light",
                           "light",
                           "normal",
-                          "regular",
-                          "book",
                           "medium",
                           "semi-bold",
-                          "demi-bold",
                           "bold",
                           "extra-bold",
-                          "ultra-bold",
-                          "black",
-                          "heavy",
-                          "extra-black",
-                          "ultra-black"
+                          "black"
                         ]
                       }
                     ]
+                  },
+                  "$type": {
+                    "type": "string",
+                    "const": "fontWeight"
                   },
                   "$description": {
                     "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$description"
@@ -226,7 +210,6 @@
                   }
                 },
                 "required": [
-                  "$type",
                   "$value"
                 ],
                 "additionalProperties": false
@@ -234,10 +217,6 @@
               {
                 "type": "object",
                 "properties": {
-                  "$type": {
-                    "type": "string",
-                    "const": "duration"
-                  },
                   "$value": {
                     "anyOf": [
                       {
@@ -247,7 +226,8 @@
                         "type": "object",
                         "properties": {
                           "value": {
-                            "type": "number"
+                            "type": "number",
+                            "minimum": 0
                           },
                           "unit": {
                             "type": "string",
@@ -265,6 +245,10 @@
                       }
                     ]
                   },
+                  "$type": {
+                    "type": "string",
+                    "const": "duration"
+                  },
                   "$description": {
                     "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$description"
                   },
@@ -276,7 +260,6 @@
                   }
                 },
                 "required": [
-                  "$type",
                   "$value"
                 ],
                 "additionalProperties": false
@@ -284,10 +267,6 @@
               {
                 "type": "object",
                 "properties": {
-                  "$type": {
-                    "type": "string",
-                    "const": "cubicBezier"
-                  },
                   "$value": {
                     "anyOf": [
                       {
@@ -295,28 +274,17 @@
                       },
                       {
                         "type": "array",
+                        "items": {
+                          "type": "number"
+                        },
                         "minItems": 4,
-                        "maxItems": 4,
-                        "items": [
-                          {
-                            "type": "number",
-                            "minimum": 0,
-                            "maximum": 1
-                          },
-                          {
-                            "type": "number"
-                          },
-                          {
-                            "type": "number",
-                            "minimum": 0,
-                            "maximum": 1
-                          },
-                          {
-                            "type": "number"
-                          }
-                        ]
+                        "maxItems": 4
                       }
                     ]
+                  },
+                  "$type": {
+                    "type": "string",
+                    "const": "cubicBezier"
                   },
                   "$description": {
                     "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$description"
@@ -329,7 +297,6 @@
                   }
                 },
                 "required": [
-                  "$type",
                   "$value"
                 ],
                 "additionalProperties": false
@@ -337,10 +304,6 @@
               {
                 "type": "object",
                 "properties": {
-                  "$type": {
-                    "type": "string",
-                    "const": "number"
-                  },
                   "$value": {
                     "anyOf": [
                       {
@@ -351,6 +314,10 @@
                       }
                     ]
                   },
+                  "$type": {
+                    "type": "string",
+                    "const": "number"
+                  },
                   "$description": {
                     "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$description"
                   },
@@ -362,7 +329,6 @@
                   }
                 },
                 "required": [
-                  "$type",
                   "$value"
                 ],
                 "additionalProperties": false
@@ -370,55 +336,33 @@
               {
                 "type": "object",
                 "properties": {
-                  "$type": {
-                    "type": "string",
-                    "const": "strokeStyle"
-                  },
                   "$value": {
                     "anyOf": [
                       {
                         "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
                       },
                       {
-                        "type": "string",
-                        "enum": [
-                          "solid",
-                          "dashed",
-                          "dotted",
-                          "double",
-                          "groove",
-                          "ridge",
-                          "outset",
-                          "inset"
-                        ]
-                      },
-                      {
                         "type": "object",
                         "properties": {
-                          "dashArray": {
-                            "type": "array",
-                            "items": {
-                              "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/1/properties/$value"
-                            },
-                            "minItems": 1
+                          "width": {
+                            "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/1/properties/$value"
                           },
-                          "lineCap": {
-                            "type": "string",
-                            "enum": [
-                              "round",
-                              "butt",
-                              "square"
-                            ]
+                          "color": {
+                            "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value"
                           }
                         },
                         "required": [
-                          "dashArray",
-                          "lineCap"
+                          "width",
+                          "color"
                         ],
                         "additionalProperties": false
                       }
                     ]
                   },
+                  "$type": {
+                    "type": "string",
+                    "const": "strokeStyle"
+                  },
                   "$description": {
                     "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$description"
                   },
@@ -430,7 +374,6 @@
                   }
                 },
                 "required": [
-                  "$type",
                   "$value"
                 ],
                 "additionalProperties": false
@@ -438,30 +381,42 @@
               {
                 "type": "object",
                 "properties": {
+                  "$value": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "width": {
+                            "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/1/properties/$value"
+                          },
+                          "style": {
+                            "type": "string",
+                            "enum": [
+                              "solid",
+                              "dashed",
+                              "dotted"
+                            ]
+                          },
+                          "color": {
+                            "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value"
+                          }
+                        },
+                        "required": [
+                          "width",
+                          "style",
+                          "color"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  },
                   "$type": {
                     "type": "string",
                     "const": "border"
                   },
-                  "$value": {
-                    "type": "object",
-                    "properties": {
-                      "color": {
-                        "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value"
-                      },
-                      "width": {
-                        "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/1/properties/$value"
-                      },
-                      "style": {
-                        "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/7/properties/$value"
-                      }
-                    },
-                    "required": [
-                      "color",
-                      "width",
-                      "style"
-                    ],
-                    "additionalProperties": false
-                  },
                   "$description": {
                     "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$description"
                   },
@@ -473,7 +428,6 @@
                   }
                 },
                 "required": [
-                  "$type",
                   "$value"
                 ],
                 "additionalProperties": false
@@ -481,30 +435,36 @@
               {
                 "type": "object",
                 "properties": {
+                  "$value": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "duration": {
+                            "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/4/properties/$value"
+                          },
+                          "timingFunction": {
+                            "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/5/properties/$value"
+                          },
+                          "delay": {
+                            "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/4/properties/$value"
+                          }
+                        },
+                        "required": [
+                          "duration",
+                          "timingFunction"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  },
                   "$type": {
                     "type": "string",
                     "const": "transition"
                   },
-                  "$value": {
-                    "type": "object",
-                    "properties": {
-                      "duration": {
-                        "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/4/properties/$value"
-                      },
-                      "delay": {
-                        "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/4/properties/$value"
-                      },
-                      "timingFunction": {
-                        "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/5/properties/$value"
-                      }
-                    },
-                    "required": [
-                      "duration",
-                      "delay",
-                      "timingFunction"
-                    ],
-                    "additionalProperties": false
-                  },
                   "$description": {
                     "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$description"
                   },
@@ -516,7 +476,6 @@
                   }
                 },
                 "required": [
-                  "$type",
                   "$value"
                 ],
                 "additionalProperties": false
@@ -524,18 +483,14 @@
               {
                 "type": "object",
                 "properties": {
-                  "$type": {
-                    "type": "string",
-                    "const": "shadow"
-                  },
                   "$value": {
                     "anyOf": [
                       {
+                        "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
+                      },
+                      {
                         "type": "object",
                         "properties": {
-                          "color": {
-                            "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value"
-                          },
                           "offsetX": {
                             "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/1/properties/$value"
                           },
@@ -548,27 +503,24 @@
                           "spread": {
                             "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/1/properties/$value"
                           },
-                          "inset": {
-                            "type": "boolean"
+                          "color": {
+                            "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value"
                           }
                         },
                         "required": [
-                          "color",
                           "offsetX",
                           "offsetY",
                           "blur",
-                          "spread"
+                          "spread",
+                          "color"
                         ],
                         "additionalProperties": false
-                      },
-                      {
-                        "type": "array",
-                        "items": {
-                          "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/10/properties/$value/anyOf/0"
-                        },
-                        "minItems": 1
                       }
                     ]
+                  },
+                  "$type": {
+                    "type": "string",
+                    "const": "shadow"
                   },
                   "$description": {
                     "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$description"
@@ -581,7 +533,6 @@
                   }
                 },
                 "required": [
-                  "$type",
                   "$value"
                 ],
                 "additionalProperties": false
@@ -589,30 +540,55 @@
               {
                 "type": "object",
                 "properties": {
+                  "$value": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value/anyOf/0"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "linear",
+                              "radial",
+                              "conic"
+                            ]
+                          },
+                          "stops": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "position": {
+                                  "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/6/properties/$value"
+                                },
+                                "color": {
+                                  "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value"
+                                }
+                              },
+                              "required": [
+                                "position",
+                                "color"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "minItems": 2
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "stops"
+                        ],
+                        "additionalProperties": false
+                      }
+                    ]
+                  },
                   "$type": {
                     "type": "string",
                     "const": "gradient"
                   },
-                  "$value": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "color": {
-                          "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$value"
-                        },
-                        "position": {
-                          "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/6/properties/$value"
-                        }
-                      },
-                      "required": [
-                        "color",
-                        "position"
-                      ],
-                      "additionalProperties": false
-                    },
-                    "minItems": 1
-                  },
                   "$description": {
                     "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$description"
                   },
@@ -624,7 +600,6 @@
                   }
                 },
                 "required": [
-                  "$type",
                   "$value"
                 ],
                 "additionalProperties": false
@@ -632,10 +607,6 @@
               {
                 "type": "object",
                 "properties": {
-                  "$type": {
-                    "type": "string",
-                    "const": "typography"
-                  },
                   "$value": {
                     "type": "object",
                     "properties": {
@@ -664,6 +635,10 @@
                     ],
                     "additionalProperties": false
                   },
+                  "$type": {
+                    "type": "string",
+                    "const": "typography"
+                  },
                   "$description": {
                     "$ref": "#/definitions/dtcg-v1/additionalProperties/anyOf/0/anyOf/0/properties/$description"
                   },
@@ -675,7 +650,6 @@
                   }
                 },
                 "required": [
-                  "$type",
                   "$value"
                 ],
                 "additionalProperties": false
@@ -699,13 +673,31 @@
                 "required": [
                   "$value"
                 ],
-                "additionalProperties": true
+                "additionalProperties": false
               }
             ]
           },
           {
             "type": "object",
             "properties": {
+              "$type": {
+                "type": "string",
+                "enum": [
+                  "color",
+                  "dimension",
+                  "fontFamily",
+                  "fontWeight",
+                  "duration",
+                  "cubicBezier",
+                  "number",
+                  "strokeStyle",
+                  "border",
+                  "transition",
+                  "shadow",
+                  "gradient",
+                  "typography"
+                ]
+              },
               "$description": {
                 "type": "string"
               },
